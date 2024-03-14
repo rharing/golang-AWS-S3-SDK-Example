@@ -17,7 +17,7 @@ var (
 )
 
 const (
-	BUCKET_NAME = "mathis12345bucket"
+	BUCKET_NAME = "ikwilnaardefilm"
 	REGION      = "eu-central-1"
 )
 
@@ -154,8 +154,27 @@ func main() {
 
 	for _, object := range listObjects().Contents {
 		getObject(*object.Key)
-		deleteObject(*object.Key)
+		//deleteObject(*object.Key)
 	}
+	uploadContent("dit dus", "delme.txt")
 
 	fmt.Println(listObjects())
+}
+
+func uploadContent(content string, filename string) *s3.PutObjectOutput {
+	// create a reader from data data in memory
+	reader := strings.NewReader(content)
+	resp, err := s3session.PutObject(&s3.PutObjectInput{
+		Body:   reader,
+		Bucket: aws.String(BUCKET_NAME),
+		Key:    aws.String(filename),
+		ACL:    aws.String(s3.BucketCannedACLPublicRead),
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
+	return resp
+
 }
